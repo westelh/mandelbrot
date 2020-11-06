@@ -1,45 +1,49 @@
 #include "mandelbrot.hpp"
 #include "bmp.hpp"
 #include <limits>
-#include <iostream>
 #include <vector>
-#include <math.h>
+#include <cstdlib>
+#include <future>
+#include <chrono>
+#include <mpfr.h>
+#include <mpreal.h>
 
-int calc_mandelbrot(const int n, std::complex<double> c){
-	std::complex<double> z(0.0f, 0.0f);
+int calc_mandelbrot(const int n, complex_t c){
+	complex_t z(0.0f, 0.0f);
 	for (size_t i = 0; i < n; i++){
-		z = std::pow(z, 2)+c;
-		if (std::abs(z) == std::numeric_limits<double>::infinity()){
+		z = std::pow(z, 2);
+		z += c;
+		if (std::abs(z) == std::numeric_limits<hogefloat_t>::infinity()){
 			return i;
 		}
 	}
 	return n;
 }
 
-int calc_julia(const int n, std::complex<double> z){
-	const std::complex<double> c(-0.21f, -0.65f);
+int calc_julia(const int n, complex_t z){
+	complex_t c(-0.21f, -0.65f);
 	for (size_t i = 0; i < n; i++){
 		z = std::pow(z, 2)+c;
-		if (std::abs(z) == std::numeric_limits<double>::infinity()){
+		if (std::abs(z) == std::numeric_limits<hogefloat_t>::infinity()){
 			return i;
 		}
 	}
 	return n;
 }
 
-void mandelbrot_AA(const std::complex<double> center, const std::complex<double> range, const unsigned width, const unsigned height) {
-	const std::complex<double> resolution(range.real()/width, range.imag()/height);
-	const std::complex<double> cmpl(center.real()-range.real()/2, center.imag()-range.imag()/2);
+void mandelbrot_AA(const complex_t center, const complex_t range, const unsigned width, const unsigned height) {
+	const complex_t resolution(range.real()/width, range.imag()/height);
+	const complex_t cmpl(center.real()-range.real()/2, center.imag()-range.imag()/2);
 	for (size_t i = 0; i < height; i++) {
 		for (size_t j = 0; j < width; j++) {
-			std::complex<double> hoge(cmpl.real()+j*resolution.real(), cmpl.imag()+i*resolution.imag());
+			complex_t hoge(cmpl.real()+j*resolution.real(), cmpl.imag()+i*resolution.imag());
 			std::cout << (char)(calc_mandelbrot('~'-' ', hoge)+' ');
 		}
 		std::cout << std::endl;
 	}
 }
 
-pixel gradation(const std::vector<pixel> waypoint, double p) {
+pixel gradation(const std::vector<pixel> waypoint, const double p) {
 	for (int i = 0; i < waypoint.size()-1; i++) {
 		if (((double)(i+1)/(waypoint.size()-1)) > p) {
 			double q = p - (double)i/(waypoint.size()-1);
@@ -51,31 +55,59 @@ pixel gradation(const std::vector<pixel> waypoint, double p) {
 			return a;
 		}
 	}
-	return waypoint[waypoint.size()-1];
+	return *waypoint.end();
 }
 
-grid mandelbrot_bmp(const std::complex<double> center, const std::complex<double> range, const unsigned width, const unsigned height) {
+int make_mandelbrot_thread(const complex_t start_all, const complex_t resolution, const int num_of_threads, const int offset, const std::vector<pixel> gradation_waypoint, const int height, const int width, grid& data) {
+	const complex_t start = complex_t(start_all.real()+resolution.real()*offset, start_all.imag());
+	for (int i = 0; i < width/num_of_threads; i++) {
+		for (int j = 0; j < height; j++) {
+			const complex_t point(start.real()+resolution.real()*num_of_threads*i, start.imag()+resolution.imag()*j);
+			const int num = calc_mandelbrot(0xFF, point);
+			data[i][j] = gradation(gradation_waypoint, (double)num/0xFF);
+		}
+	}
+	return 0;
+}
+
+grid mandelbrot_bmp_multithread(const complex_t center, const complex_t range, const std::vector<pixel> gradation_waypoint, const unsigned width, const unsigned height, const int num_of_threads) {
+	// num_of_threads must be a divisor of width.
+	if ((width % num_of_threads) != 0) {
+		fprintf(stderr, "num_of_threads(%d) must be a divisor of width(%d).\n", num_of_threads, width);
+		std::abort();
+	}
+
+	const complex_t resolution(range.real()/width, range.imag()/height);
+	const complex_t start(center.real()-range.real()/2, center.imag()-range.imag()/2);
+
+	std::vector<grid> thread_data;
+	thread_data.resize(num_of_threads);
+	for (auto &a: thread_data) {
+		a.resize(width/num_of_threads);
+		for (auto &b: a) {
+			b.resize(height);
+		}
+	}
+	std::vector<std::future<int>> v;
+	for (int i = 0; i < num_of_threads; i++) {
+		v.push_back(std::async(std::launch::async, [=, &thread_data]{
+			return make_mandelbrot_thread(start, resolution, num_of_threads, i, gradation_waypoint, height, width, std::ref(thread_data[i]));
+		}));
+	}
+	for (int i = 0; i < v.size(); i++) {
+		v[i].get();
+	}
+
 	grid data;
 	data.resize(height);
 	for (int i = 0; i < data.size(); i++) {
 		data[i].resize(width);
 	}
-	// hassan
-	std::vector<pixel> gradation_waypoint;
-	gradation_waypoint.push_back(pixel(0x00,0x00,0x00));
-	gradation_waypoint.push_back(pixel(0x00,0x00,0x80));
-	gradation_waypoint.push_back(pixel(0x33,0xCC,0xCC));
-	gradation_waypoint.push_back(pixel(0xFF,0xCC,0x00));
-	gradation_waypoint.push_back(pixel(0xFF,0xFF,0xFF));
-	gradation_waypoint.push_back(pixel(0x00,0x00,0x00));
-	const std::complex<double> resolution(range.real()/width, range.imag()/height);
-	const std::complex<double> start(center.real()-range.real()/2, center.imag()-range.imag()/2);
 	for (int i = 0; i < height; i++) {
 		for (int j = 0; j < width; j++) {
-			std::complex<double> point(start.real()+j*resolution.real(), start.imag()+i*resolution.imag());
-			int num = calc_mandelbrot(0xFF, point);
-			data[i][j] = gradation(gradation_waypoint, (double)num/0xFF);
+			data[i][j] = thread_data[j%num_of_threads][j/num_of_threads][i];
 		}
 	}
+
 	return data;
 }
