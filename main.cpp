@@ -3,7 +3,7 @@
 
 int main(int argc, char const *argv[]) {
 	if (argc != 2) {
-		std::cerr << "" << '\n';
+		std::cerr << "Enter the file name after the executable file." << '\n';
 	}
 	// diverge
 	std::vector<pixel> gradation_waypoint;
