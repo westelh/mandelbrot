@@ -1,7 +1,10 @@
 #include "mandelbrot.hpp"
 #include "bmp.hpp"
 
-int main(){
+int main(int argc, char const *argv[]) {
+	if (argc != 2) {
+		std::cerr << "" << '\n';
+	}
 	// diverge
 	std::vector<pixel> gradation_waypoint;
 	gradation_waypoint.push_back(pixel(0x00,0x00,0x00));
@@ -13,7 +16,7 @@ int main(){
 	// converge
 
 	// mpfr::mpreal::set_default_prec(precision);
-	bmp_write file("mandelbrot.bmp");
+	bmp_write file(argv[1]);
 	complex_t center(-0.6428f, 0.4507f);
 	complex_t range((hogefloat_t)16/60, (hogefloat_t)9/60);
 	grid data = mandelbrot_bmp_multithread(center, range, gradation_waypoint, 1920*2, 1080*2, 16);

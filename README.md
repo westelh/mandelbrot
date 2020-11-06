@@ -12,3 +12,7 @@ std::vector<std::vector<pixel>> mandelbrot_bmp_multithread(
 	const int num_of_threads /*実行スレッド数*/
 );
 ```
+コマンドライン引数からファイル名を指定する。  
+```
+$ ./a.out mandelbrot.bmp
+```
