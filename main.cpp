@@ -12,7 +12,7 @@ int main(){
 	gradation_waypoint.push_back(pixel(0x00,0x00,0x00));
 	// converge
 
-	mpfr::mpreal::set_default_prec(precision);
+	// mpfr::mpreal::set_default_prec(precision);
 	bmp_write file("mandelbrot.bmp");
 	complex_t center(-0.6428f, 0.4507f);
 	complex_t range((hogefloat_t)16/60, (hogefloat_t)9/60);

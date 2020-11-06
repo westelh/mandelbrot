@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
 project(mandelbrot CXX)
 set(CMAKE_CXX_COMPILER "g++")
-set(CMAKE_CXX_FLAGS "-std=c++20 -O3 -mtune=native -march=native -lgmp -lgmpxx -lmpfr -pthread")
+set(CMAKE_CXX_FLAGS "-std=c++20 -O3 -mtune=native -march=native -pthread")
 add_executable(a.out main.cpp mandelbrot.cpp bmp.cpp)

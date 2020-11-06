@@ -1,13 +1,13 @@
 #pragma once
 
 #include <complex>
-#include <mpreal.h>
+// #include <mpreal.h>
 #include "bmp.hpp"
 
-const int precision = 4096;
+// const int precision = 65536;
 
-using hogefloat_t = mpfr::mpreal;
-// using hogefloat_t = double;
+// using hogefloat_t = mpfr::mpreal;
+using hogefloat_t = double;
 
 using complex_t = std::complex<hogefloat_t>;
 

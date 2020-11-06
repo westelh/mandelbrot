@@ -5,15 +5,15 @@
 #include <cstdlib>
 #include <future>
 #include <chrono>
-#include <mpfr.h>
-#include <mpreal.h>
+// #include <mpfr.h>
+// #include <mpreal.h>
 
 int calc_mandelbrot(const int n, complex_t c){
 	complex_t z(0.0f, 0.0f);
 	for (size_t i = 0; i < n; i++){
 		z = std::pow(z, 2);
 		z += c;
-		if (std::abs(z) == std::numeric_limits<hogefloat_t>::infinity()){
+		if (abs(z) == std::numeric_limits<hogefloat_t>::infinity()) {
 			return i;
 		}
 	}
@@ -24,7 +24,7 @@ int calc_julia(const int n, complex_t z){
 	complex_t c(-0.21f, -0.65f);
 	for (size_t i = 0; i < n; i++){
 		z = std::pow(z, 2)+c;
-		if (std::abs(z) == std::numeric_limits<hogefloat_t>::infinity()){
+		if (abs(z) == std::numeric_limits<hogefloat_t>::infinity()){
 			return i;
 		}
 	}

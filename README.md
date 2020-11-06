@@ -1,6 +1,6 @@
 # Mandelbrot Set
 マンデルブロ集合をbitmapに描く。  
-コンパイルには[GNU MPFR](https://www.mpfr.org/)と、[MPFR C++](http://www.holoborodko.com/pavel/mpfr/)が必要。  
+~~コンパイルには[GNU MPFR](https://www.mpfr.org/)と、[MPFR C++](http://www.holoborodko.com/pavel/mpfr/)が必要。~~ 複素数の無限大の計算がうまくいってないっぽいのでとりあえずdoubleにしている。  
 画像データを生成する関数の引数は以下
 ```cpp
 std::vector<std::vector<pixel>> mandelbrot_bmp_multithread(
