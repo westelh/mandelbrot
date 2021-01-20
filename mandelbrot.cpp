@@ -16,6 +16,9 @@ int calc_mandelbrot(const int n, complex_t c){
 		if (abs(z) == std::numeric_limits<hogefloat_t>::infinity()) {
 			return i;
 		}
+		// if (abs(z) > 2.0f) {
+		// 	return i+10;
+		// }
 	}
 	return n;
 }
