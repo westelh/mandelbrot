@@ -1,6 +1,7 @@
 #include "mandelbrot.hpp"
 #include "bmp.hpp"
 #include <cstdlib>
+#include <thread>
 
 int main(int argc, char const *argv[]) {
 	if (argc != 2) {
@@ -21,7 +22,7 @@ int main(int argc, char const *argv[]) {
 	bmp_write file(argv[1]);
 	complex_t center(-0.6428f, 0.4507f);
 	complex_t range((hogefloat_t)16/60, (hogefloat_t)9/60);
-	grid data = mandelbrot_bmp_multithread(center, range, gradation_waypoint, 1920*2, 1080*2, 8);
+	grid data = mandelbrot_bmp_multithread(center, range, gradation_waypoint, 1920*2, 1080*2, std::thread::hardware_concurrency());
 	file.set_data(data);
 	file.write();
 	return 0;
