@@ -3,3 +3,5 @@ project(mandelbrot CXX)
 set(CMAKE_CXX_COMPILER "g++")
 set(CMAKE_CXX_FLAGS "-std=c++17 -O3 -mtune=native -march=native -pthread")
 add_executable(a.out main.cpp mandelbrot.cpp bmp.cpp)
+
+add_subdirectory(gui)
