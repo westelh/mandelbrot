@@ -4,7 +4,7 @@
 #include <cstdint>
 
 // pack RGB as ARGB 32bit format
-constexpr uint32_t pack_rgb(unsigned char r, unsigned char g, unsigned char b) {
+constexpr std::uint32_t pack_rgb(std::uint8_t r, std::uint8_t g, std::uint8_t b) {
     uint32_t ret = 0xff;    // let alpha channel 100%
     ret = ret << 8;
     ret = ret | r;
