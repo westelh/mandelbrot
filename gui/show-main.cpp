@@ -3,6 +3,7 @@
 #include <gtkmm.h>
 #include "mandelbrot.hpp"
 #include "bmp_canvas.h"
+#include "utils.h"
 
 grid generate();
 
@@ -37,7 +38,7 @@ int main(int argc, char** argv) {
         for (int y = 0; y < width; ++y) {
             // TODO: somehow the image flips, flip once more by (height-x-1)
             auto&& pixel = img_to_show.at(height-x-1).at(y);
-            canvas.set_pixel_at(x, y, bmp_canvas::pack_rgb(pixel.r, pixel.g, pixel.b));
+            canvas.set_pixel_at(x, y, pack_rgb(pixel.r, pixel.g, pixel.b));
         }
     }
 

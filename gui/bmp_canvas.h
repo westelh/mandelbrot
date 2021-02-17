@@ -16,9 +16,6 @@ public:
 
     void set_pixel_at(int x, int y, std::uint32_t);
 
-    // pack RGB as ARGB 32bit format
-    static uint32_t pack_rgb(unsigned char r, unsigned char g, unsigned char b) noexcept;
-
 protected:
     bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 

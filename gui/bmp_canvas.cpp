@@ -29,12 +29,3 @@ void bmp_canvas::set_pixel_at(int x, int y, std::uint32_t pixel) {
     reinterpret_cast<std::uint32_t*>(data_m.data())[x*width_m+y] = pixel;
 }
 
-uint32_t bmp_canvas::pack_rgb(unsigned char r, unsigned char g, unsigned char b) noexcept {
-    unsigned char argb[4] = {};
-    // little endian
-    argb[0] = b;
-    argb[1] = g;
-    argb[2] = r;
-    argb[3] = 0xff;
-    return *reinterpret_cast<std::uint32_t*>(argb);
-}
