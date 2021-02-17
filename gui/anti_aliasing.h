@@ -4,17 +4,17 @@
 #include <cstdint>
 #include <utility>
 
-constexpr auto sum() {
+constexpr auto sum() noexcept {
     return 0;
 }
 
 template<class Head, class... Tail>
-constexpr auto sum(Head&& head, Tail&&... tail) {
+constexpr auto sum(Head&& head, Tail&&... tail) noexcept(noexcept(head+sum())) {
     return head + sum(std::forward<Tail>(tail)...);
 }
 
 template<class Float, class... Args>
-constexpr Float average(Float&& least, Args&&... args) {
+constexpr Float average(Float&& least, Args&&... args) noexcept(noexcept(sum())) {
     return sum(std::forward<Float>(least), std::forward<Args>(args)...) / (sizeof...(args) + 1);
 }
 
