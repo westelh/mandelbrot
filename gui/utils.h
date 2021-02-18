@@ -17,15 +17,16 @@ constexpr std::uint32_t pack_rgb(std::uint8_t r, std::uint8_t g, std::uint8_t b)
 
 enum class argb : std::uint8_t {
     // offset
-    alpha = 24,
-    red   = 16,
-    green = 8,
+    alpha = 3,
+    red   = 2,
+    green = 1,
     blue  = 0,
 };
 
 template<argb Offset>
 constexpr std::uint8_t pick(std::uint32_t color) noexcept {
-    return color >> static_cast<std::uint32_t>(Offset);
+    auto array = reinterpret_cast<unsigned char *>(&color);
+    return array[static_cast<int>(Offset)];
 }
 
 #endif //MANDELBROT_UTILS_H
