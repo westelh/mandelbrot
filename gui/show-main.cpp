@@ -1,5 +1,6 @@
 #include <thread>
 #include <stdexcept>
+#include <array>
 #include <gtkmm.h>
 #include "mandelbrot.hpp"
 #include "bmp_canvas.h"
@@ -17,8 +18,8 @@ int main(int argc, char** argv) {
         img_to_show = generate();
     }
 
-    auto height = static_cast<int>(img_to_show.size());
-    auto width = static_cast<int>(img_to_show.at(0).size());
+    auto height = img_to_show.size();
+    auto width = img_to_show.at(0).size();
 
     // gui initialization
     Glib::ustring application_id{};
@@ -29,7 +30,9 @@ int main(int argc, char** argv) {
     window.resize(width, height);
     window.set_title(title);
 
-    bmp_canvas canvas{width, height};
+    std::vector<std::uint32_t> data{}; data.resize(width*height, 0xffffffff);
+    size_t stride = Cairo::ImageSurface::format_stride_for_width(Cairo::FORMAT_ARGB32, width);
+    bmp_canvas canvas{std::span(data), Cairo::FORMAT_ARGB32, width, height, stride};
     window.add(canvas);
     canvas.show();
 
@@ -38,7 +41,7 @@ int main(int argc, char** argv) {
         for (int y = 0; y < width; ++y) {
             // TODO: somehow the image flips, flip once more by (height-x-1)
             auto&& pixel = img_to_show.at(height-x-1).at(y);
-            canvas.set_pixel_at(x, y, pack_rgb(pixel.r, pixel.g, pixel.b));
+            data[x * width + y] = pack_rgb(pixel.r, pixel.g, pixel.b);
         }
     }
 
