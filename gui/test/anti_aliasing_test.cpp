@@ -19,14 +19,15 @@ TEST(anti_aliasing, template_based_average_test) {
 TEST(anti_aliasing, average2x) {
     auto color1 = 0xff5eb390;
     auto color2 = 0xff432f00;
-    auto mixed = average2x(color1, color2);
-    ASSERT_EQ(mixed, 0xff507148);
+    auto color3 = 0xff3c9210;
+    auto color4 = 0xff77e77e;
+    ASSERT_EQ(average2x(color1, color2, color3, color4), 0xff559647);
 }
 
 TEST(anti_aliasing, simple_mixing_by_average2x) {
-    std::uint32_t data[] = {0xff5eb390, 0xff432f00};
-    std::uint32_t destination[1];
-    mix_for_every<2>(std::span(data), std::span(destination), average2x);
-    ASSERT_EQ(destination[0], 0xff507148);
+    std::uint32_t data[] = {0xff5eb390, 0xff432f00, 0xff3c9210, 0xff77e77e};
+    std::vector<std::uint32_t> destination{};
+    mix2x2(std::span(data), std::back_inserter(destination), 1, average2x);
+    ASSERT_EQ(destination[0], 0xff559647);
 }
 
