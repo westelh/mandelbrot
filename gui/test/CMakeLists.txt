@@ -1,5 +1,7 @@
 enable_testing()
 find_package(GTest REQUIRED)
+
+set(CMAKE_CXX_STANDARD 20)
 add_executable(gui_test
         anti_aliasing_test.cpp
         utils_test.cpp
