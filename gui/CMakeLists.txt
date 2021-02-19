@@ -15,7 +15,5 @@ if(GUI)
     target_link_directories(show PRIVATE ${GTKMM_LIBRARY_DIRS})
     target_link_libraries(show ${GTKMM_LIBRARIES})
 
-    if (ENABLE_TESTS)
-        add_subdirectory(test)
-    endif ()
+    add_subdirectory(test)
 endif()
