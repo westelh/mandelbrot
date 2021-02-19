@@ -13,6 +13,7 @@ int main(int argc, char** argv) {
     // read from file or generate()
     grid original = {};
     if (argc > 1) {
+        // TODO: Reading from file fails. Glibc stops reading and spits error.
         auto reader = bmp_read(argv[1]); reader.read();
         original = reader.get_data();
     } else {
