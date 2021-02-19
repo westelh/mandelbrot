@@ -4,22 +4,25 @@
 #include <gtkmm.h>
 #include "mandelbrot.hpp"
 #include "bmp_canvas.h"
+#include "anti_aliasing.h"
 #include "utils.h"
 
 grid generate();
 
 int main(int argc, char** argv) {
     // read from file or generate()
-    grid img_to_show = {};
+    grid original = {};
     if (argc > 1) {
         auto reader = bmp_read(argv[1]); reader.read();
-        img_to_show = reader.get_data();
+        original = reader.get_data();
     } else {
-        img_to_show = generate();
+        original = generate();
     }
 
-    auto height = img_to_show.size();
-    auto width = img_to_show.at(0).size();
+    auto height = original.size();
+    const auto width = original.at(0).size();
+    std::vector<std::uint32_t> original_converted{};
+    grid_to_linear(original, std::back_inserter(original_converted));
 
     // gui initialization
     Glib::ustring application_id{};
@@ -27,23 +30,16 @@ int main(int argc, char** argv) {
 
     Glib::ustring title{"mandelbrot"};
     Gtk::Window window{};
-    window.resize(width, height);
+    window.resize(width/2, height/2);
     window.set_title(title);
 
-    std::vector<std::uint32_t> data{}; data.resize(width*height, 0xffffffff);
-    size_t stride = Cairo::ImageSurface::format_stride_for_width(Cairo::FORMAT_ARGB32, width);
-    bmp_canvas canvas{std::span(data), Cairo::FORMAT_ARGB32, width, height, stride};
+    std::vector<std::uint32_t> data{};
+    mix2x2(std::span(original_converted), std::back_inserter(data), width / 2, average2x);
+
+    size_t stride = Cairo::ImageSurface::format_stride_for_width(Cairo::FORMAT_ARGB32, width/2);
+    bmp_canvas canvas{std::span(data), Cairo::FORMAT_ARGB32, width/2, height/2, stride};
     window.add(canvas);
     canvas.show();
-
-    // bmp to canvas
-    for (int x = 0; x < height; ++x) {
-        for (int y = 0; y < width; ++y) {
-            // TODO: somehow the image flips, flip once more by (height-x-1)
-            auto&& pixel = img_to_show.at(height-x-1).at(y);
-            data[x * width + y] = pack_rgb(pixel.r, pixel.g, pixel.b);
-        }
-    }
 
     // main loop
     return app->run(window);
@@ -60,10 +56,9 @@ grid generate() {
     gradation_waypoint.push_back(pixel(0xFF,0xFF,0xFF));
     gradation_waypoint.push_back(pixel(0x00,0x00,0x00));
     // converge
-
     // mpfr::mpreal::set_default_prec(precision);
     complex_t center(-0.6428f, 0.4507f);
     complex_t range((hogefloat_t)16/60, (hogefloat_t)9/60);
-    grid data = mandelbrot_bmp_multithread(center, range, gradation_waypoint, 800, 600, std::thread::hardware_concurrency());
+    grid data = mandelbrot_bmp_multithread(center, range, gradation_waypoint, 1280*2, 720*2, std::thread::hardware_concurrency());
     return data;
 }
