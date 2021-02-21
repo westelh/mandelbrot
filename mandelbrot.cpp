@@ -74,9 +74,13 @@ int make_mandelbrot_thread(const complex_t start_all, const complex_t resolution
 }
 
 grid mandelbrot_bmp_multithread(const complex_t center, const complex_t range, const std::vector<pixel> gradation_waypoint, const unsigned width, const unsigned height, const int num_of_threads) {
-	// num_of_threads must be a divisor of width.
-	if ((width % num_of_threads) != 0) {
-		fprintf(stderr, "num_of_threads(%d) must be a divisor of width(%d).\n", num_of_threads, width);
+	try {
+		if ((width % num_of_threads) != 0) {
+			throw std::runtime_error("num_of_threads(%d) must be a divisor of width(%d).\n");
+		}
+	}
+	catch (std::exception &e){
+		std::cerr << "Error: " << e.what() << '\n';
 		std::abort();
 	}
 
