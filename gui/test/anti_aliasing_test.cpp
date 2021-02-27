@@ -21,13 +21,13 @@ TEST(anti_aliasing, average2x) {
     auto color2 = 0xff432f00;
     auto color3 = 0xff3c9210;
     auto color4 = 0xff77e77e;
-    ASSERT_EQ(average2x(color1, color2, color3, color4), 0xff559647);
+    ASSERT_EQ(color_average(color1, color2, color3, color4), 0xff559647);
 }
 
 TEST(anti_aliasing, simple_mixing_by_average2x) {
     std::uint32_t data[] = {0xff5eb390, 0xff432f00, 0xff3c9210, 0xff77e77e};
     std::vector<std::uint32_t> destination{};
-    mix2x2(std::span(data), std::back_inserter(destination), 1, average2x);
+    average2x2(std::span(data), std::back_inserter(destination), 1);
     ASSERT_EQ(destination[0], 0xff559647);
 }
 

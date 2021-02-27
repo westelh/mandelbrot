@@ -35,7 +35,7 @@ int main(int argc, char** argv) {
     window.set_title(title);
 
     std::vector<std::uint32_t> data{};
-    mix2x2(std::span(original_converted), std::back_inserter(data), width / 2, average2x);
+    average2x2(std::span(original_converted), std::back_inserter(data), width / 2);
 
     size_t stride = Cairo::ImageSurface::format_stride_for_width(Cairo::FORMAT_ARGB32, width/2);
     bmp_canvas canvas{std::span(data), Cairo::FORMAT_ARGB32, width/2, height/2, stride};
