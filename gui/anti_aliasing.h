@@ -12,7 +12,7 @@ constexpr auto sum(Head&& head, Tail&&... tail) noexcept {
     if constexpr (0 < sizeof...(tail)) {
         return head + sum(std::forward<Tail>(tail)...);
     } else {
-        return 0;
+        return head;
     }
 }
 
