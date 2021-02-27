@@ -7,22 +7,22 @@
 #include <functional>
 #include "utils.h"
 
-constexpr auto sum() noexcept {
-    return 0;
-}
-
 template<class Head, class... Tail>
-constexpr auto sum(Head&& head, Tail&&... tail) noexcept(noexcept(head+sum())) {
-    return head + sum(std::forward<Tail>(tail)...);
+constexpr auto sum(Head&& head, Tail&&... tail) noexcept {
+    if constexpr (0 < sizeof...(tail)) {
+        return head + sum(std::forward<Tail>(tail)...);
+    } else {
+        return 0;
+    }
 }
 
 template<class Float, class... Args>
-constexpr Float average(Float&& least, Args&&... args) noexcept(noexcept(sum())) {
+constexpr Float average(Float&& least, Args&&... args) noexcept {
     return sum(std::forward<Float>(least), std::forward<Args>(args)...) / (sizeof...(args) + 1);
 }
 
 template<class... UINT32TColor>
-std::uint32_t color_average(UINT32TColor&&... colors) noexcept(noexcept(average(pick<argb::red>(std::forward<UINT32TColor>(colors))...))) {
+std::uint32_t color_average(UINT32TColor&&... colors) noexcept {
     auto&& r = average(pick<argb::red>(std::forward<UINT32TColor>(colors))...);
     auto&& g = average(pick<argb::green>(std::forward<UINT32TColor>(colors))...);
     auto&& b = average(pick<argb::blue>(std::forward<UINT32TColor>(colors))...);
