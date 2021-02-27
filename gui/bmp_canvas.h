@@ -13,9 +13,7 @@ class bmp_canvas : public Gtk::DrawingArea {
     const size_t stride_m{};
 
 public:
-    bmp_canvas(std::span<const std::uint32_t> data, Cairo::Format format, size_t width, size_t height, size_t stride) noexcept:
-    data_m{data}, format_m{format}, width_m{width}, height_m{height}, stride_m{stride} { }
-
+    bmp_canvas(std::span<const std::uint32_t> data, Cairo::Format format, size_t width, size_t height, size_t stride) noexcept;
     ~bmp_canvas()  override = default;
 
 protected:
