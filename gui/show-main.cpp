@@ -7,38 +7,41 @@
 #include "anti_aliasing.h"
 #include "utils.h"
 
-grid generate();
+grid generate(size_t width, size_t height);
 
 int main(int argc, char** argv) {
-    // read from file or generate()
-    grid original = {};
-    if (argc > 1) {
-        // TODO: Reading from file fails. Glibc stops reading and spits error.
-        auto reader = bmp_read(argv[1]); reader.read();
-        original = reader.get_data();
-    } else {
-        original = generate();
-    }
-
-    auto height = original.size();
-    const auto width = original.at(0).size();
-    std::vector<std::uint32_t> original_converted{};
-    grid_to_linear(original, std::back_inserter(original_converted));
+    // args
+    const auto width = argc <= 2 ? std::stoi(argv[1]) : 720;
+    const auto height = argc <= 3 ? std::stoi(argv[2]) : 480;
 
     // gui initialization
     Glib::ustring application_id{};
-    auto app = Gtk::Application::create(argc, argv, application_id);
-
+    auto fake_argc = 1; // hide command-line options from gtk
+    auto app = Gtk::Application::create(fake_argc, argv, application_id);
     Glib::ustring title{"mandelbrot"};
     Gtk::Window window{};
-    window.resize(width/2, height/2);
     window.set_title(title);
+    window.resize(width, height);
 
+    // prepare master data
+    const auto master = generate(width * 2, height * 2);
+
+    // check master data
+    if(master.empty()) {
+        throw std::runtime_error("Failed to read master data. Data is empty.");
+    }
+
+    // aa utility takes linear bmp
+    std::vector<std::uint32_t> linear_master{};
+    grid_to_linear(master, std::back_inserter(linear_master));
+
+    // aa
     std::vector<std::uint32_t> data{};
-    average2x2(std::span(original_converted), std::back_inserter(data), width / 2);
+    average2x2(std::span(linear_master), std::back_inserter(data), width);
 
-    size_t stride = Cairo::ImageSurface::format_stride_for_width(Cairo::FORMAT_ARGB32, width/2);
-    bmp_canvas canvas{std::span(data), Cairo::FORMAT_ARGB32, width/2, height/2, stride};
+    // initialize canvas with a reference to the image
+    size_t stride = Cairo::ImageSurface::format_stride_for_width(Cairo::FORMAT_ARGB32, width);
+    bmp_canvas canvas{std::span(data), Cairo::FORMAT_ARGB32, static_cast<size_t>(width), static_cast<size_t>(height), stride};
     window.add(canvas);
     canvas.show();
 
@@ -47,7 +50,7 @@ int main(int argc, char** argv) {
 }
 
 // TODO: Fix return of generate(). Return often contains strange stripes.
-grid generate() {
+grid generate(size_t width, size_t height) {
     // diverge
     std::vector<pixel> gradation_waypoint;
     gradation_waypoint.push_back(pixel(0x00,0x00,0x00));
@@ -60,6 +63,6 @@ grid generate() {
     // mpfr::mpreal::set_default_prec(precision);
     complex_t center(-0.6428f, 0.4507f);
     complex_t range((hogefloat_t)16/60, (hogefloat_t)9/60);
-    grid data = mandelbrot_bmp_multithread(center, range, gradation_waypoint, 1280*2, 720*2, std::thread::hardware_concurrency());
+    grid data = mandelbrot_bmp_multithread(center, range, gradation_waypoint, width, height, std::thread::hardware_concurrency());
     return data;
 }
