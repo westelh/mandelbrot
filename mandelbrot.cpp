@@ -58,7 +58,7 @@ pixel gradation(const std::vector<pixel> waypoint, const double p) {
 			return a;
 		}
 	}
-	return *waypoint.end();
+	return *(waypoint.end()-1);
 }
 
 int make_mandelbrot_thread(const complex_t start_all, const complex_t resolution, const int num_of_threads, const int offset, const std::vector<pixel> gradation_waypoint, const int height, const int width, grid& data) {
