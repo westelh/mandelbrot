@@ -11,8 +11,8 @@ grid generate(size_t width, size_t height);
 
 int main(int argc, char** argv) {
     // args
-    const auto width = argc >= 2 ? std::stoi(argv[1]) : 720;
-    const auto height = argc >= 3 ? std::stoi(argv[2]) : 480;
+    const auto width = argc >= 2 ? std::stoi(argv[1]) : 1280;
+    const auto height = argc >= 3 ? std::stoi(argv[2]) : 720;
 
     // gui initialization
     Glib::ustring application_id{};
