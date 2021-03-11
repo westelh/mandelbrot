@@ -62,7 +62,8 @@ grid generate(size_t width, size_t height) {
     // converge
     // mpfr::mpreal::set_default_prec(precision);
     complex_t center(-0.6428f, 0.4507f);
-    complex_t range((hogefloat_t)16/60, (hogefloat_t)9/60);
+    hogefloat_t width_range = (hogefloat_t)16/60;
+    complex_t range(width_range, width_range*((hogefloat_t)height/width));
     grid data = mandelbrot_bmp_multithread(center, range, gradation_waypoint, width, height, std::thread::hardware_concurrency());
     return data;
 }

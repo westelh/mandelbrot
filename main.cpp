@@ -20,9 +20,12 @@ int main(int argc, char const *argv[]) {
 
 	// mpfr::mpreal::set_default_prec(precision);
 	bmp_write file(argv[1]);
+	const unsigned width = 1920*2;
+	const unsigned height = 1080*2;
 	complex_t center(-0.6428f, 0.4507f);
-	complex_t range((hogefloat_t)16/90, (hogefloat_t)9/90);
-	grid data = mandelbrot_bmp_multithread(center, range, gradation_waypoint, 1920*2, 1080*2, std::thread::hardware_concurrency());
+	hogefloat_t width_range = (hogefloat_t)16/60;
+	complex_t range(width_range, width_range*((hogefloat_t)height/width));
+	grid data = mandelbrot_bmp_multithread(center, range, gradation_waypoint, width, height, std::thread::hardware_concurrency());
 	file.set_data(data);
 	file.write();
 	return 0;
