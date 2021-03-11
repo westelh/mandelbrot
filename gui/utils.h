@@ -43,8 +43,13 @@ inline std::uint32_t pixel_to_uint32t(const pixel& pixel) {
 
 template<class OutputIterator>
 void grid_to_linear(const grid& from, OutputIterator to) {
-    for (const auto & i : from) {
-        std::transform(i.begin(), i.end(), to, pixel_to_uint32t);
+    // i takasa
+    for (int i = 0; i < from.size(); ++i) {
+        // j haba
+        for (int j = 0; j < from.at(0).size(); ++j) {
+            to = pixel_to_uint32t(from[from.size()-i-1][j]);
+            to++;
+        }
     }
 }
 

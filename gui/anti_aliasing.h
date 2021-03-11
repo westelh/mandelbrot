@@ -33,12 +33,13 @@ template<class DestContainer>
 void average2x2(const std::span<const std::uint32_t> data, std::back_insert_iterator<DestContainer> dest, std::uint32_t dest_width) {
     const auto size_of_result = data.size() / 4;
     for (int i = 0; i < size_of_result; ++i) {
+        const auto head = 2 * i + dest_width * (i/dest_width) * 2;
         dest = color_average(
-                data[2 * i],
-                data[2 * i + 1],
-                data[2 * i + 2 * dest_width],
-                data[2 * i + 2 * dest_width + 1]
-        );
+                data[head],
+                data[head+1],
+                data[head+dest_width*2],
+                data[head+dest_width*2+1]
+                );
         dest++;
     }
 }
