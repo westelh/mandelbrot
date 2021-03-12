@@ -15,7 +15,7 @@ if(GUI)
     target_include_directories(show PRIVATE ${CMAKE_SOURCE_DIR} ${GTKMM_INCLUDE_DIRS})
     message(${GTKMM_INCLUDE_DIRS})
     target_link_directories(show PRIVATE ${GTKMM_LIBRARY_DIRS})
-    target_link_libraries(show ${GTKMM_LIBRARIES})
+    target_link_libraries(show ${GTKMM_LIBRARIES} Threads::Threads)
 
     add_subdirectory(test)
 endif()
