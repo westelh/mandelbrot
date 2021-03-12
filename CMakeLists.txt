@@ -12,6 +12,7 @@ add_compile_options(
         $<$<CONFIG:RELEASE>:-O3>
         $<$<CONFIG:RELEASE>:-mtune=native>
         $<$<CONFIG:RELEASE>:-march=native>)
+add_link_options(-lpthread)
 add_compile_definitions($<$<CONFIG:RELEASE>:NDEBUG>)
 
 add_executable(a.out main.cpp mandelbrot.cpp bmp.cpp)

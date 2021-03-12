@@ -2,7 +2,7 @@ option(GUI "Enable option for displaying on monitor")
 if(GUI)
     message("Display option is enabled")
     find_package(PkgConfig REQUIRED)
-    pkg_check_modules(GTKMM gtkmm-3.0>=3.24.3 REQUIRED)
+    pkg_check_modules(GTKMM gtkmm-3.0>=3.24.2 REQUIRED)
 
     set(CMAKE_CXX_STANDARD 20)
     add_executable(show
