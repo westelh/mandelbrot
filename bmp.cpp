@@ -6,8 +6,7 @@
 void bmp_write::write() {
 	std::ofstream ofs(filename, std::ios::out | std::ios::binary);
 	if (!ofs.is_open()) {
-		std::cerr << filename << " cannot open." << '\n';
-		std::terminate();
+		throw std::runtime_error(filename+" cannot open.");
 	}
 
 	ofs.write((char*)&hd.bftype, sizeof(hd.bftype));
@@ -78,8 +77,7 @@ void bmp_write::set_data(grid data) {
 void bmp_read::read() {
 	std::ifstream ifs(filename, std::ios::in | std::ios::binary);
 	if (!ifs.is_open()) {
-		std::cerr << filename << " cannot open." << '\n';
-		abort();
+		throw std::runtime_error(filename+" cannot open.");
 	}
 	ifs.read((char*)&hd.bftype, sizeof(hd.bftype));
 	ifs.read((char*)&hd.bfsize, sizeof(hd.bfsize));
