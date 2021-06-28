@@ -24,7 +24,7 @@ jobs:
       run: sudo apt-get update
 
     - name: Upgrade packages
-      run: apt-get upgrade -y
+      run: sudo apt-get upgrade -y
     
     - name: Install Dependencies
       run: sudo apt-get install -y g++-11 libgtkmm-3.0-dev libgtest-dev cmake
